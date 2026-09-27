@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Strefa 35 Auto V6">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="screen-orientation" content="any">
+<title>Strefa 35 Auto V6</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f0f; color: #e0e0e0; min-height: 100vh; min-height: 100dvh; }
+@media (orientation: landscape) and (max-height: 500px) {
+  .header { padding: 8px 16px; }
+  .header h1 { font-size: 17px; }
+  .toolbar { padding: 6px 12px; gap: 6px; }
+  .btn { height: 32px; font-size: 12px; padding: 0 10px; }
+  .counter-bar { padding: 6px 12px; }
+  .counter-box-val { font-size: 20px; }
+}
+.header { padding: 12px 16px 10px; background: #1a1a1a; border-bottom: 0.5px solid #2a2a2a; }
+.header-greet { font-size: 13px; color: #888; margin-bottom: 2px; }
+.header h1 { font-size: 20px; font-weight: 600; color: #fff; }
+.toolbar { padding: 10px 16px; background: #141414; border-bottom: 0.5px solid #2a2a2a; display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { border: none; border-radius: 8px; padding: 0 14px; height: 36px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.btn-primary { background: #1a6edb; color: #fff; }
+.btn-green { background: #0d3a1a; color: #4cd966; border: 0.5px solid #1a5c2a; }
+.btn-danger { background: #2a1010; color: #ff5555; border: 0.5px solid #5a2020; }
+.btn-orange { background: #2a1a00; color: #FFAA33; border: 0.5px solid #5a3a00; }
+.btn-purple { background: #1a0a2a; color: #CC66FF; border: 0.5px solid #4a1a6a; }
+.btn-undo { background: #1a1a2a; color: #aaa; border: 0.5px solid #333; }
+.btn-undo:disabled { color: #333; border-color: #222; cursor: default; }
+.btn-export { background: #0d3a2a; color: #4cd9aa; border: 0.5px solid #1a5c3a; }
+.input-area { padding: 12px 16px; background: #141414; border-bottom: 0.5px solid #2a2a2a; display: none; }
+.input-area.open { display: block; }
+.input-area textarea { width: 100%; height: 150px; background: #222; border: 0.5px solid #333; border-radius: 8px; color: #e0e0e0; padding: 10px; font-size: 13px; resize: none; }
+.input-actions { display: flex; gap: 8px; margin-top: 10px; }
+.add-area { padding: 12px 16px; background: #141414; border-bottom: 0.5px solid #2a2a2a; display: none; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+.add-area.open { display: flex; }
+.add-field { display: flex; flex-direction: column; gap: 4px; }
+.add-label { font-size: 11px; color: #888; }
+.add-input { height: 36px; border-radius: 8px; border: 0.5px solid #333; background: #222; color: #e0e0e0; padding: 0 10px; font-size: 13px; }
+.counter-bar { padding: 10px 16px; background: #141414; border-bottom: 0.5px solid #2a2a2a; display: flex; gap: 10px; }
+.counter-box { flex: 1; background: #1e1e1e; border-radius: 10px; border: 0.5px solid #2a2a2a; padding: 10px 12px; display: flex; flex-direction: column; align-items: center; }
+.counter-box-val { font-size: 24px; font-weight: 800; color: #4cd966; line-height: 1; }
+.counter-box-val.low { color: #f0a500; }
+.counter-box-val.zero { color: #ff5555; }
+.counter-box-lbl { font-size: 10px; color: #666; margin-top: 4px; text-align: center; }
+.stats { padding: 8px 16px; display: flex; gap: 6px; background: #141414; border-bottom: 0.5px solid #2a2a2a; }
+.stat { flex: 1; background: #1e1e1e; border-radius: 10px; border: 0.5px solid #2a2a2a; padding: 8px 6px; text-align: center; }
+.stat-val { font-size: 17px; font-weight: 700; color: #fff; }
+.stat-lbl { font-size: 9px; color: #666; margin-top: 1px; }
+.warn-bar { padding: 8px 16px; background: #2a1500; border-bottom: 0.5px solid #5a3000; font-size: 12px; color: #FFAA33; display: none; }
+.warn-bar.show { display: block; }
+.swap-mode-bar { padding: 10px 16px; background: #0a1a2a; border-bottom: 0.5px solid #1a3a5a; display: none; align-items: center; justify-content: space-between; }
+.swap-mode-bar.show { display: flex; }
+.swap-mode-info { font-size: 13px; color: #4488FF; font-weight: 500; }
+.swap-mode-sub { font-size: 11px; color: #555; margin-top: 2px; }
+.btn-cancel-swap { background: #1a1a1a; border: 0.5px solid #333; border-radius: 8px; color: #aaa; font-size: 12px; padding: 0 12px; height: 30px; cursor: pointer; }
+.hint-bar { font-size: 11px; color: #555; text-align: center; padding: 6px 0 2px; display: none; }
+.hint-bar.show { display: block; }
+.art-list { padding: 10px 16px 24px; }
+.art-card { background: #1e1e1e; border: 0.5px solid #2a2a2a; border-radius: 14px; margin-bottom: 10px; overflow: hidden; transition: border-color 0.15s, background 0.15s; }
+.art-card.ok { border-color: #1a5c2a; }
+.art-card.bad { border-color: #5a1a1a; background: #1a1010; }
+.art-card.assigned { border-color: #1a5c1a; }
+.art-card.assigned.bad { border-color: #5a1a1a; }
+.art-card.no-slot { border-color: #5a1a1a; }
+.v-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; font-size: 11px; font-weight: 800; margin-left: 6px; vertical-align: middle; flex-shrink: 0; }
+.v-badge.ok { background: #0d3a1a; color: #4cd966; border: 0.5px solid #1a5c2a; }
+.v-badge.bad { background: #3a1010; color: #ff5555; border: 0.5px solid #5a2020; }
+.art-name-row { display: flex; align-items: flex-start; gap: 6px; }
+.v-reason { font-size: 11px; color: #ff7777; margin-top: 3px; }
+.art-card.swap-selected { border-color: #4488FF; background: #0a1525; border-width: 2px; }
+.art-card.swap-target { border-color: #4488FF; background: #050d1a; border-style: dashed; }
+.art-top { padding: 12px 14px 8px; display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.art-nr { font-size: 20px; font-weight: 800; color: #444; min-width: 28px; flex-shrink: 0; padding-top: 2px; }
+.art-nr.selected { color: #4488FF; }
+.art-info { flex: 1; min-width: 0; }
+.art-name { font-size: 13px; font-weight: 600; color: #e0e0e0; line-height: 1.3; margin-bottom: 3px; }
+.art-code { font-size: 11px; color: #666; }
+.art-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.ep-input { width: 48px; height: 34px; background: #111; border: 1.5px solid #5a3a00; border-radius: 8px; color: #FFAA33; font-size: 15px; font-weight: 700; text-align: center; padding: 0; }
+.ep-input:focus { outline: none; border-color: #FFAA33; }
+.ep-label { font-size: 9px; color: #555; }
+.btn-del-art { background: none; border: none; color: #333; font-size: 15px; cursor: pointer; padding: 2px; }
+.btn-del-art:active { color: #ff5555; }
+.art-bottom { padding: 0 14px 10px; display: flex; gap: 8px; align-items: center; }
+.gn-badge { background: #0a1a3a; border: 0.5px solid #1a3a7a; border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: 600; color: #4488FF; }
+.slots-badge { font-size: 11px; color: #555; }
+.no-slot-badge { font-size: 12px; color: #ff5555; }
+/* Eksport */
+.export-section { display: none; padding: 12px 16px 24px; }
+.export-section.show { display: block; }
+.export-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.export-title { font-size: 14px; font-weight: 600; color: #4cd9aa; }
+.btn-copy-export { background: #0d3a2a; border: 0.5px solid #1a5c3a; border-radius: 8px; color: #4cd9aa; font-size: 13px; font-weight: 600; padding: 0 14px; height: 32px; cursor: pointer; }
+.btn-copy-export.copied { background: #0d3a1a; color: #4cd966; }
+.export-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-img-export { background: #1a2a3a; border: 0.5px solid #2a4a6a; border-radius: 8px; color: #6ab0ff; font-size: 13px; font-weight: 600; padding: 0 14px; height: 32px; cursor: pointer; }
+.btn-img-export.done { background: #0d3a1a; color: #4cd966; border-color: #1a5c3a; }
+.export-img-wrap { display: none; margin-top: 12px; padding: 10px; background: #1a1a1a; border-radius: 10px; border: 0.5px solid #2a2a2a; }
+.export-img-wrap.show { display: block; }
+.export-img-hint { font-size: 12px; color: #8ab; margin-bottom: 8px; line-height: 1.4; }
+.export-img-wrap img { width: 100%; height: auto; border-radius: 4px; background: #fff; display: block; }
+.export-text { background: #111; border: 0.5px solid #2a2a2a; border-radius: 10px; padding: 0; font-size: 12px; color: #ccc; line-height: 1.35; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; user-select: text; -webkit-user-select: text; cursor: text; overflow-x: auto; }
+.exp-table { width: 100%; min-width: 420px; border-collapse: collapse; border: 1px solid #444; }
+.exp-table th, .exp-table td { padding: 8px 10px; text-align: left; border: 1px solid #333; vertical-align: middle; }
+.exp-table th { color: #e0e0e0; font-size: 11px; font-weight: 700; background: #1a1a1a; white-space: nowrap; text-align: center; }
+.exp-table td { font-size: 12px; }
+.exp-table .c-gn { color: #4488FF; font-weight: 700; white-space: nowrap; }
+.exp-table .c-art { color: #ccc; font-weight: 600; white-space: nowrap; }
+.exp-table .c-name { color: #e0e0e0; font-weight: 500; }
+.exp-table .c-kart { color: #aaa; white-space: nowrap; text-align: right; }
+.exp-table .c-ep { color: #FFAA33; font-weight: 700; white-space: nowrap; text-align: right; }
+.exp-table tbody tr:nth-child(even) { background: #161616; }
+.exp-table tr.suma-row td { background: #1a1a1a; font-weight: 700; color: #fff; border-top: 2px solid #555; }
+.exp-table tr.suma-row .c-ep { color: #FFAA33; }
+.exp-table .c-zr { color: #888; white-space: nowrap; }
+.ep-readonly { width: 48px; height: 34px; background: #1a1a1a; border: 1.5px solid #333; border-radius: 8px; color: #FFAA33; font-size: 15px; font-weight: 700; text-align: center; line-height: 34px; }
+.lock-section { display: none; padding: 10px 16px 16px; border-top: 0.5px solid #2a2a2a; }
+.lock-section.open { display: block; }
+.lock-title { font-size: 13px; color: #888; font-weight: 600; margin-bottom: 8px; }
+.lock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.lock-btn { background: #1e1e1e; border: 0.5px solid #2a2a2a; border-radius: 8px; padding: 8px 4px; text-align: center; font-size: 11px; color: #888; cursor: pointer; font-weight: 500; }
+.lock-btn.locked { background: #1a0808; border-color: #5a1a1a; color: #ff5555; }
+.empty { text-align: center; padding: 48px 16px; color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-greet">👋 Cześć Beata</div>
+  <h1>Strefa 35 — Auto V6</h1>
+</div>
+<div class="toolbar">
+  <button class="btn btn-primary" onclick="toggleInput()">+ Lista</button>
+  <button class="btn btn-purple" onclick="toggleAdd()">+ Artykuł</button>
+  <button class="btn btn-undo" id="btn-undo" onclick="undo()" disabled>↩ Cofnij</button>
+  <button class="btn btn-green" id="btn-assign" onclick="assignAll()">▶ Przypisz</button>
+  <button class="btn btn-purple" id="btn-edit-list" style="display:none" onclick="editList()">✎ Edytuj listę</button>
+  <button class="btn btn-export" id="btn-export" style="display:none" onclick="toggleExport()">📋 Lista</button>
+  <button class="btn btn-orange" onclick="toggleLocks()">🔒 Blokady</button>
+  <button class="btn btn-danger" onclick="clearAll()">↺ Reset</button>
+</div>
+<div class="input-area" id="input-area">
+  <textarea id="inp-list" placeholder="W aplikacji: przytrzymaj to pole → Wklej (lista z WhatsApp)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="text"></textarea>
+  <div class="input-hint" style="font-size:11px;color:#888;margin:6px 0 4px;line-height:1.35">W WebIntoApp / aplikacji: <b>przytrzymaj pole → Wklej</b>. Przycisk schowka działa głównie w przeglądarce.</div>
+  <div class="input-actions">
+    <button class="btn btn-primary" onclick="parseList()">Wczytaj</button>
+    <button class="btn btn-orange" onclick="pasteListFromClipboard()">Wklej ze schowka</button>
+    <button class="btn btn-danger" onclick="document.getElementById('inp-list').value=''">Wyczyść</button>
+  </div>
+</div>
+<div class="add-area" id="add-area">
+  <div class="add-field"><div class="add-label">Nr artykułu</div><input class="add-input" id="add-art" type="text" placeholder="np. 5575089" style="width:110px"></div>
+  <div class="add-field" style="flex:1;min-width:120px"><div class="add-label">Nazwa</div><input class="add-input" id="add-name" type="text" placeholder="Nazwa produktu" style="width:100%"></div>
+  <div class="add-field"><div class="add-label">EP</div><input class="add-input" id="add-ep" type="number" min="1" placeholder="1" style="width:60px"></div>
+  <button class="btn btn-purple" onclick="addItem()" style="align-self:flex-end">Dodaj</button>
+</div>
+<div class="counter-bar">
+  <div class="counter-box">
+    <div class="counter-box-val" id="cnt-total">—</div>
+    <div class="counter-box-lbl">EP w przydziale</div>
+  </div>
+  <div class="counter-box" id="cnt-outside-box" style="display:none">
+    <div class="counter-box-val" id="cnt-outside">—</div>
+    <div class="counter-box-lbl">poza gniazdami</div>
+  </div>
+</div>
+<div class="stats" id="stats" style="display:none">
+  <div class="stat"><div class="stat-val" id="st-art">0</div><div class="stat-lbl">Artykułów</div></div>
+  <div class="stat"><div class="stat-val" id="st-ep">0</div><div class="stat-lbl">EP łącznie</div></div>
+  <div class="stat"><div class="stat-val" id="st-free">44</div><div class="stat-lbl">Wolne gn.</div></div>
+  <div class="stat"><div class="stat-val" id="st-used">—</div><div class="stat-lbl">Zajęte gn.</div></div>
+</div>
+<div class="warn-bar" id="warn-bar"></div>
+<div class="swap-mode-bar" id="swap-mode-bar">
+  <div>
+    <div class="swap-mode-info">🔄 Wybrano — tap na drugi artykuł żeby zamienić</div>
+    <div class="swap-mode-sub">Tap na ten sam = odznacz</div>
+  </div>
+  <button class="btn-cancel-swap" onclick="cancelSwap()">Anuluj</button>
+</div>
+<div class="hint-bar" id="hint-bar">Tap na kafelek → zaznacz · Tap na drugi → zamień miejscami</div>
+<div id="main-content"><div class="empty">Wgraj listę i kliknij "▶ Przypisz"</div></div>
+
+<!-- Eksport po przypisaniu -->
+<div class="export-section" id="export-section">
+  <div class="export-head">
+    <div class="export-title">📋 Podsumowanie przydziału</div>
+    <div class="export-actions">
+      <button class="btn-img-export" id="btn-img-exp" onclick="shareTableImage()">📷 Obraz na WA</button>
+      <button class="btn-copy-export" id="btn-copy-exp" onclick="copyExport()">Kopiuj tekst</button>
+    </div>
+  </div>
+  <div class="export-text" id="export-text"></div>
+  <div class="export-img-wrap" id="export-img-wrap">
+    <div class="export-img-hint" id="export-img-hint">Przytrzymaj obraz → Udostępnij → WhatsApp</div>
+    <img id="export-img" alt="Tabela przydziału" style="touch-action:manipulation;-webkit-touch-callout:default;user-select:auto;-webkit-user-select:auto">
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+      <a id="export-img-dl" href="#" download="strefa35_przydzial.png" class="btn-copy-export" style="text-decoration:none;display:inline-flex;align-items:center">⬇ Pobierz PNG</a>
+    </div>
+  </div>
+</div>
+
+<div class="lock-section" id="lock-section">
+  <div class="lock-title">🔒 Blokady — tap żeby zablokować</div>
+  <div class="lock-grid" id="lock-grid"></div>
+</div>
+
+<script>
+const ALL_SLOTS=["35-003","35-005","35-017","35-019","35-021","35-023","35-025","35-027","35-039","35-041","35-043","35-045","35-047","35-049","35-061","35-063","35-065","35-067","35-069","35-071","35-083","35-085","35-087","35-089","35-091","35-093","35-105","35-107","35-109","35-111","35-113","35-115","35-127","35-129","35-131","35-133","35-135","35-137","35-149","35-151","35-153","35-155","35-157","35-159"];
+function loadBlocked(){try{const s=localStorage.getItem('s35auto_blocked');return s?JSON.parse(s):[]}catch(e){return[]}}
+function saveBlocked(){try{localStorage.setItem('s35auto_blocked',JSON.stringify(blocked))}catch(e){}}
+function saveState(){
+  try{localStorage.setItem('s35auto_state',JSON.stringify({items,assigned,idCounter}));}catch(e){}
+}
+function loadState(){
+  try{
+    const s=localStorage.getItem('s35auto_state');if(!s)return;
+    const d=JSON.parse(s);
+    items=d.items||[];assigned=!!d.assigned;idCounter=d.idCounter||0;
+  }catch(e){}
+}
+function clearState(){try{localStorage.removeItem('s35auto_state');}catch(e){}}
+
+let blocked=loadBlocked(),items=[],assigned=false,idCounter=0,selectedId=null;
+let history=[];
+loadState();
+
+function saveHistory(){history.push(JSON.stringify({items,assigned}));if(history.length>20)history.shift();document.getElementById('btn-undo').disabled=false;}
+function undo(){
+  if(history.length===0)return;
+  const prev=JSON.parse(history.pop());
+  items=prev.items;assigned=prev.assigned;selectedId=null;
+  document.getElementById('btn-undo').disabled=history.length===0;
+  // Wróć do pola wklejania, jeśli jest jeszcze tekst listy
+  const ta=document.getElementById('inp-list');
+  if(ta&&ta.value.trim()){
+    document.getElementById('input-area').classList.add('open');
+    document.getElementById('add-area').classList.remove('open');
+  }
+  saveState();render();
+}
+
+function toggleInput(){document.getElementById('input-area').classList.toggle('open');document.getElementById('add-area').classList.remove('open');}
+function toggleAdd(){document.getElementById('add-area').classList.toggle('open');document.getElementById('input-area').classList.remove('open');}
+function parseEp(str){if(!str)return null;const m=str.match(/(\d+)\s*(ep|palet[ay]?)/i);return m?parseInt(m[1]):null;}
+
+function parseList(){
+  const raw=document.getElementById('inp-list').value.trim();if(!raw)return;
+
+  // 1) Surowy podział
+  let rawLines=raw.split(/\r?\n/).map(l=>l.trim()).filter(l=>l);
+
+  // 2) Sklejanie połamań WhatsApp — nowa pozycja = numer art. na początku
+  //    (także sklejony: 156524Kiełbasa — BEZ \b, bo cyfra+litera to jeden „word”)
+  const merged=[];
+  rawLines.forEach(l=>{
+    const startsNew=/^(\d+[\.\)]\s*)?(\d{4,}(?!\d)|Art\.?\s*\d{4,}|\|?\s*FA\b)/i.test(l);
+    if(merged.length===0||startsNew){
+      merged.push(l);
+    }else{
+      merged[merged.length-1]+=' '+l;
+    }
+  });
+
+  // 3) Rozdzielanie gdy w JEDNEJ linii wylądowały 2+ pozycje
+  //    np. "... 1 ep 156524Kiełbasa..." albo "... 99 kart 156524 ..."
+  const lines=[];
+  merged.forEach(line=>{
+    let s=line;
+    s=s.replace(/(\d)(kart)/gi,'$1 $2');
+    s=s.replace(/(\d)(ep)\b/gi,'$1 $2');
+    s=s.replace(/(\d)(palet[ay]?)\b/gi,'$1 $2');
+    // Po EP lub kartonach — kolejny numer artykułu = nowa pozycja
+    const chunks=s.split(/(?<=\b\d+\s*(?:ep|palet[ay]?|kart\.?)\b)\s+(?=\d{4,})/i);
+    chunks.forEach(c=>{
+      c=c.trim();
+      if(!c)return;
+      // Dodatkowo: w środku tekstu sklejony numer (spacja + 5+ cyfr + litera)
+      const sub=[];
+      let rest=c;
+      const glueRe=/\s+(\d{5,})(?=[A-Za-zÀ-ÿĄąĆćĘęŁłŃńÓóŚśŹźŻż])/g;
+      let last=0, m;
+      while((m=glueRe.exec(rest))!==null){
+        // tylko gdy przed match jest już jakiś sensowny tekst z liczbą (art/ep)
+        const before=rest.slice(0,m.index).trim();
+        if(before.length>8&&/\d/.test(before)){
+          sub.push(before);
+          rest=rest.slice(m.index+1); // od numeru (bez spacji wiodącej — index wskazuje spację)
+          glueRe.lastIndex=0;
+          last=0;
+        }
+      }
+      if(rest.trim())sub.push(rest.trim());
+      (sub.length?sub:[c]).forEach(x=>{if(x.trim())lines.push(x.trim());});
+    });
+  });
+
+  const parsed=[];
+  lines.forEach((orig)=>{
+    let line=orig;
+
+    line=line.replace(/^\d+[\.\)]\s*/,'');
+    line=line.replace(/[–—−‐‑]/g,'-');
+    line=line.replace(/\t+/g,' ');
+    line=line.replace(/(\d)(kart)/gi,'$1 $2');
+    line=line.replace(/(\d)(ep)\b/gi,'$1 $2');
+    line=line.replace(/(\d)(palet[ay]?)\b/gi,'$1 $2');
+
+    let art=null, ep=null, zrodlo=null, name=null, kartony=null;
+
+    if(line.includes('|')){
+      let parts=line.split('|').map(p=>p.trim()).filter(p=>p!=='');
+      parts=parts.filter(p=>!/^fa\.?$/i.test(p));
+      for(let i=0;i<parts.length;i++){
+        if(/^\d{4,}$/.test(parts[i])){art=parts[i];parts.splice(i,1);break;}
+      }
+      if(!art){
+        for(let i=0;i<parts.length;i++){
+          const mm=parts[i].match(/^(\d{4,})(?=[A-Za-zÀ-ÿĄąĆćĘęŁłŃńÓóŚśŹźŻż])/);
+          if(mm){art=mm[1];parts[i]=parts[i].slice(mm[1].length).trim();break;}
+        }
+      }
+      for(let i=0;i<parts.length;i++){
+        const em=parts[i].match(/(\d+)\s*(ep|palet[ay]?)/i);
+        if(em){ep=parseInt(em[1]);parts.splice(i,1);break;}
+      }
+      for(let i=0;i<parts.length;i++){
+        const zm=parts[i].match(/^(\d{2}-\d{3})$/);
+        if(zm){zrodlo=zm[1];parts.splice(i,1);break;}
+      }
+      for(let i=0;i<parts.length;i++){
+        const km=parts[i].match(/^(\d+)\s*kart/i);
+        if(km){kartony=parseInt(km[1]);parts.splice(i,1);break;}
+      }
+      name=parts.join(' ').replace(/\s+/g,' ').trim();
+    } else {
+      line=line.replace(/^\s*fa\.?\s+/i,'').trim();
+      line=line.replace(/\bfa\.\s*/gi,' ').trim();
+
+      let m=line.match(/Art\.?\s*(\d{4,})/i);
+      if(m){art=m[1];line=line.replace(/Art\.?\s*\d{4,}/i,' ').trim();}
+
+      m=line.match(/(\d+)\s*(ep|palet[ay]?)\b/i);
+      if(m){ep=parseInt(m[1]);line=line.replace(/-?\s*\d+\s*(ep|palet[ay]?)\b/ig,' ').trim();}
+
+      m=line.match(/(\d+)\s*kart\.?\b/i);
+      if(m){kartony=parseInt(m[1]);line=line.replace(/-?\s*\d+\s*kart\.?\b/ig,' ').trim();}
+
+      m=line.match(/\b(\d{2}-\d{3})\b/);
+      if(m){zrodlo=m[1];line=line.replace(m[0],' ').trim();}
+
+      if(!art){
+        m=line.match(/^(\d{4,})(?=\s|-|[A-Za-zÀ-ÿĄąĆćĘęŁłŃńÓóŚśŹźŻż])/);
+        if(m){
+          art=m[1];
+          line=line.slice(m[1].length).replace(/^\s*-\s*/,'').trim();
+        }
+      }
+      if(!art){
+        m=line.match(/^(\d{4,})\s*-\s*/);
+        if(m){art=m[1];line=line.slice(m[0].length).trim();}
+      }
+      if(!art){
+        m=line.match(/(?:^|[\s-])(\d{4,})(?=[A-Za-zÀ-ÿĄąĆćĘęŁłŃńÓóŚśŹźŻż])/);
+        if(m){art=m[1];line=line.replace(m[1],' ').trim();}
+      }
+      if(!art){
+        m=line.match(/(?:^|[\s-])(\d{5,})(?:\s|$)/);
+        if(m){art=m[1];line=line.replace(m[1],' ').trim();}
+      }
+
+      line=line.replace(/\s*-\s*/g,' ').replace(/\/+/g,' ');
+      name=line.replace(/\s+/g,' ').trim();
+    }
+
+    if(!zrodlo&&name){
+      const zm=name.match(/\b(\d{2}-\d{3})\b/);
+      if(zm){zrodlo=zm[1];name=name.replace(zm[0],'').replace(/\s+/g,' ').trim();}
+    }
+    // Numer sklejony w nazwie → art (gdy jeszcze brak)
+    if(!art&&name){
+      let m=name.match(/^(\d{4,})(?=[A-Za-zÀ-ÿĄąĆćĘęŁłŃńÓóŚśŹźŻż]|\s)/);
+      if(m){art=m[1];name=name.slice(m[1].length).trim();}
+      if(!art){
+        m=name.match(/\b(\d{5,})\b/);
+        if(m){art=m[1];name=name.replace(m[0],'').replace(/\s+/g,' ').trim();}
+      }
+    }
+    // Gdy w nazwie ZOSTAŁ kolejny sklejony numer (druga pozycja nieodcięta) — obetnij od niego
+    // (nie powinno się zdarzyć po split, ale na wszelki wypadek)
+    if(name){
+      const extra=name.match(/\s+(\d{5,})(?=[A-Za-zÀ-ÿĄąĆćĘęŁłŃńÓóŚśŹźŻż])/);
+      if(extra){
+        name=name.slice(0,extra.index).trim();
+      }
+      name=name.replace(/^[\s\-\/]+/,'').replace(/[\s\-\/]+$/,'').trim();
+    }
+
+    if(name||art){
+      parsed.push({
+        id:++idCounter,
+        art:art||'—',
+        name:name||('Art. '+(art||'')),
+        zrodlo:zrodlo||null,
+        kartony:kartony||null,
+        maxEp:ep,
+        ep:ep||1,
+        gniazdo:null,
+        slots:[]
+      });
+    }
+  });
+
+  if(parsed.length>0){
+    saveHistory();items=parsed;assigned=false;selectedId=null;renumber();
+    document.getElementById('input-area').classList.remove('open');
+    // Tekst listy zostaje w polu — komunikat gdzie go znaleźć
+    const hint=document.getElementById('hint-bar');
+    if(hint){
+      hint.textContent='Lista wczytana. Poprawki: naciśnij + Lista (tekst zostaje w polu).';
+      hint.classList.add('show');
+    }
+    saveState();render();
+  }
+}
+
+function addItem(){
+  const art=document.getElementById('add-art').value.trim();const name=document.getElementById('add-name').value.trim();const ep=parseInt(document.getElementById('add-ep').value)||1;
+  if(!name)return;saveHistory();
+  const it={id:++idCounter,art:art||'—',name,zrodlo:null,maxEp:ep,ep,gniazdo:null,slots:[]};
+  if(assigned) it.cap=ep;
+  items.push(it);renumber();
+  document.getElementById('add-art').value='';document.getElementById('add-name').value='';document.getElementById('add-ep').value='';
+  if(assigned)assignAll();else{saveState();render();}
+}
+
+function deleteItem(id){
+  saveHistory();items=items.filter(i=>i.id!==id);if(selectedId===id)selectedId=null;renumber();
+  if(assigned)assignAll();else{saveState();render();}
+}
+function renumber(){items.forEach((it,i)=>it.nr=i+1);}
+
+function handleCardTap(id){
+  if(assigned)return;
+  if(selectedId===null){selectedId=id;render();}
+  else if(selectedId===id){cancelSwap();}
+  else{saveHistory();const i1=items.findIndex(i=>i.id===selectedId);const i2=items.findIndex(i=>i.id===id);
+    if(i1!==-1&&i2!==-1){const tmp=items[i1];items[i1]=items[i2];items[i2]=tmp;renumber();}
+    selectedId=null;saveState();render();}
+}
+function cancelSwap(){selectedId=null;render();}
+
+function getTotalEpFromList(){return items.reduce((s,i)=>s+(parseInt(i.maxEp)||parseInt(i.ep)||0),0);}
+function getEpInSlots(){return items.reduce((s,i)=>s+(i.slots?i.slots.length:0),0);}
+
+function updateCounter(){
+  const t=getTotalEpFromList();document.getElementById('cnt-total').textContent=t>0?t:'—';
+  const ob=document.getElementById('cnt-outside-box');const oe=document.getElementById('cnt-outside');
+  if(assigned){const left=t-getEpInSlots();ob.style.display='';oe.textContent=left<0?0:left;oe.className='counter-box-val'+(left<=0?' zero':left<=5?' low':'');}
+  else ob.style.display='none';
+}
+
+function freeSlots(){return ALL_SLOTS.filter(s=>!blocked.includes(s));}
+
+// Przypisz gniazda według aktualnych item.ep (kolejność listy)
+function applySlots(){
+  const free=freeSlots();
+  let si=0;
+  items.forEach(item=>{
+    item.slots=[];item.gniazdo=null;
+    const n=parseInt(item.ep)||0;
+    if(n>0&&si<free.length){
+      const take=Math.min(n,free.length-si);
+      item.ep=take;
+      item.gniazdo=free[si];
+      item.slots=free.slice(si,si+take);
+      si+=take;
+    } else {
+      item.ep=0;
+    }
+  });
+}
+
+// Pełne rozdzielanie: NAJPIERW po 1 EP każdemu (ile starczy), POTÉM reszta proporcjonalnie do max
+function assignAll(){
+  if(items.length===0)return;
+
+  items.forEach(item=>{
+    const cur=parseInt(item.ep)||1;
+    let max=parseInt(item.maxEp)||cur;
+    if(item.cap!=null) max=Math.min(max,parseInt(item.cap)||max);
+    item.maxEp=Math.max(1,max);
+    if(item.cap==null) item.cap=item.maxEp;
+    item.ep=0;
+    item.pinned=false;
+  });
+
+  const free=freeSlots();
+  const nFree=free.length;
+  if(nFree===0){
+    assigned=true;selectedId=null;saveState();render();return;
+  }
+
+  // 1) Gwarantowane minimum: po 1 EP na pozycję, dopóki starcza gniazd
+  let left=nFree;
+  items.forEach(item=>{
+    if(left>0){item.ep=1;left--;}
+  });
+
+  // 2) Pozostałe gniazda → proporcjonalnie do (max - już przyznane), bez przebijania max
+  if(left>0){
+    const rooms=items.map(it=>{
+      const max=parseInt(it.maxEp)||1;
+      return {it,room:Math.max(0,max-it.ep)};
+    });
+    const totalRoom=rooms.reduce((s,x)=>s+x.room,0);
+    if(totalRoom>0){
+      if(totalRoom<=left){
+        rooms.forEach(x=>{x.it.ep+=x.room;});
+        left-=totalRoom;
+      } else {
+        rooms.forEach(x=>{
+          if(x.room<=0)return;
+          const add=Math.floor(left*(x.room/totalRoom));
+          const give=Math.min(x.room,add);
+          x.it.ep+=give;
+        });
+        left=nFree-items.reduce((s,i)=>s+i.ep,0);
+        // resztki po floor — dokładaj od największego niedoboru
+        let guard=0;
+        while(left>0&&guard<2000){
+          let best=null,bestGap=-1;
+          items.forEach(it=>{
+            const gap=(parseInt(it.maxEp)||1)-it.ep;
+            if(gap>bestGap){bestGap=gap;best=it;}
+          });
+          if(!best||bestGap<=0)break;
+          best.ep++;left--;
+          guard++;
+        }
+      }
+    }
+  }
+
+  applySlots();
+  assigned=true;selectedId=null;
+  saveState();render();
+  const exp=document.getElementById('export-section');
+  if(exp&&exp.classList.contains('show')){
+    document.getElementById('export-text').innerHTML=generateExportHTML();
+  }
+}
+
+// Po ręcznej korekcie EP: trzymamy pin, resztę rozdajemy do max
+function redistributeAroundPins(){
+  const free=freeSlots();
+  const nFree=free.length;
+
+  // Zabezpiecz pinezki (max = cap)
+  items.forEach(item=>{
+    const cap=parseInt(item.cap)||parseInt(item.maxEp)||1;
+    if(item.pinned){
+      let e=parseInt(item.ep)||0;
+      if(e<0)e=0;if(e>cap)e=cap;
+      item.ep=e;
+    }
+  });
+
+  let pinnedSum=items.reduce((s,i)=>s+(i.pinned?(parseInt(i.ep)||0):0),0);
+  // Jeśli pinezki > wolne — ściągaj od największych pinned
+  if(pinnedSum>nFree){
+    let over=pinnedSum-nFree;
+    const pins=[...items].filter(i=>i.pinned).sort((a,b)=>b.ep-a.ep);
+    let k=0;
+    while(over>0&&k<2000){
+      const it=pins[k%pins.length];
+      if(it.ep>0){it.ep--;over--;}
+      k++;
+    }
+    pinnedSum=items.reduce((s,i)=>s+(i.pinned?(parseInt(i.ep)||0):0),0);
+  }
+
+  let remaining=nFree-pinnedSum;
+  const unpinned=items.filter(i=>!i.pinned);
+  unpinned.forEach(i=>{i.ep=0;});
+
+  // Najpierw po 1 EP każdemu nieprzypiętemu — nikt nie traci gniazda bez potrzeby
+  if(remaining>0&&unpinned.length>0){
+    unpinned.forEach(i=>{
+      if(remaining>0){i.ep=1;remaining--;}
+    });
+  }
+
+  // Reszta proporcjonalnie do (max-1)
+  if(remaining>0&&unpinned.length>0){
+    const rooms=unpinned.map(it=>({it,room:Math.max(0,(parseInt(it.maxEp)||1)-it.ep)}));
+    const totalRoom=rooms.reduce((s,x)=>s+x.room,0);
+    if(totalRoom>0){
+      if(totalRoom<=remaining){
+        rooms.forEach(x=>{x.it.ep+=x.room;});
+        remaining-=totalRoom;
+      } else {
+        rooms.forEach(x=>{
+          if(x.room<=0)return;
+          const add=Math.min(x.room,Math.floor(remaining*(x.room/totalRoom)));
+          x.it.ep+=add;
+        });
+        remaining=nFree-items.reduce((s,i)=>s+(parseInt(i.ep)||0),0);
+        let guard=0;
+        while(remaining>0&&guard<2000){
+          let best=null,bestGap=-1;
+          unpinned.forEach(it=>{
+            const gap=(parseInt(it.maxEp)||1)-it.ep;
+            if(gap>bestGap){bestGap=gap;best=it;}
+          });
+          if(!best||bestGap<=0)break;
+          best.ep++;remaining--;
+          guard++;
+        }
+      }
+    }
+  }
+
+  // Resztki — dokładaj TYLKO do nieprzypiętych (pinezka = dokładna wartość użytkownika)
+  let left=nFree-items.reduce((s,i)=>s+(parseInt(i.ep)||0),0);
+  if(left>0&&unpinned.length>0){
+    let i=0;
+    while(left>0&&i<2000){
+      const it=unpinned[i%unpinned.length];
+      const cap=parseInt(it.cap)||parseInt(it.maxEp)||1;
+      if(it.ep<cap){it.ep++;left--;}
+      i++;
+    }
+  }
+
+  applySlots();
+  saveState();render();
+  const exp=document.getElementById('export-section');
+  if(exp&&exp.classList.contains('show')){
+    document.getElementById('export-text').innerHTML=generateExportHTML();
+  }
+}
+
+// Max EP do podsumowania (tylko max, forma "9 EP")
+function maxEpOf(item){
+  return parseInt(item.cap)||parseInt(item.maxEp)||parseInt(item.ep)||0;
+}
+
+// Powrót do edycji listy (przed przypisaniem) — bez utraty kafelków
+function editList(){
+  if(!assigned)return;
+  saveHistory();
+  items.forEach(item=>{
+    const max=maxEpOf(item);
+    item.ep=max;
+    item.maxEp=max;
+    item.cap=null;
+    item.pinned=false;
+    item.gniazdo=null;
+    item.slots=[];
+  });
+  assigned=false;selectedId=null;
+  document.getElementById('export-section').classList.remove('show');
+  saveState();render();
+}
+
+function exportRows(){
+  return items.filter(i=>i.gniazdo).map(i=>{
+    const maxEp=maxEpOf(i);
+    const kart=i.kartony!=null&&i.kartony!==''?i.kartony:'';
+    const art=i.art&&i.art!=='—'?i.art:'';
+    return {gniazdo:i.gniazdo||'',art,name:i.name||'',kart,ep:maxEp,zrodlo:i.zrodlo||''};
+  });
+}
+
+function exportSums(rows){
+  let kart=0, ep=0, hasKart=false;
+  rows.forEach(r=>{
+    const k=parseInt(r.kart);
+    if(!isNaN(k)){kart+=k;hasKart=true;}
+    ep+=(parseInt(r.ep)||0);
+  });
+  return {kart:hasKart?kart:'', ep};
+}
+
+// Formularz jak na druku: Gniazdo | Nr art. | Nazwa | Kartony | EP + SUMA
+function generateExportHTML(){
+  const rows=exportRows();
+  const sum=exportSums(rows);
+  let html='<table class="exp-table"><thead><tr>';
+  html+='<th>Gniazdo</th><th>Nr artykułu</th><th>Nazwa</th><th>Ilość kartonów</th><th>Ilość EP</th><th>Źródło</th>';
+  html+='</tr></thead><tbody>';
+  rows.forEach(r=>{
+    html+=`<tr>
+      <td class="c-gn">${r.gniazdo}</td>
+      <td class="c-art">${r.art}</td>
+      <td class="c-name">${r.name}</td>
+      <td class="c-kart">${r.kart}</td>
+      <td class="c-ep">EP ${r.ep}</td>
+      <td class="c-zr">${r.zrodlo||''}</td>
+    </tr>`;
+  });
+  html+=`<tr class="suma-row">
+    <td>SUMA</td><td></td><td></td>
+    <td class="c-kart">${sum.kart}</td>
+    <td class="c-ep">EP ${sum.ep}</td>
+    <td></td>
+  </tr>`;
+  html+='</tbody></table>';
+  return html;
+}
+
+function pad(s,n){
+  s=String(s==null?'':s);
+  if(s.length>=n)return s.slice(0,n);
+  return s+' '.repeat(n-s.length);
+}
+
+// Tekst pod WhatsApp: kolumny spacjami, BEZ ramek (monospace)
+function generateExportText(){
+  const rows=exportRows();
+  const sum=exportSums(rows);
+  const data=rows.map(r=>({
+    g:String(r.gniazdo||''),
+    a:String(r.art||''),
+    n:String(r.name||''),
+    k:String(r.kart===''||r.kart==null?'':r.kart),
+    e:'EP '+r.ep,
+    z:String(r.zrodlo||'')
+  }));
+  let wG=Math.max(7,...data.map(d=>d.g.length),'SUMA'.length);
+  let wA=Math.max(11,...data.map(d=>d.a.length));
+  let wN=Math.max(5,...data.map(d=>d.n.length));
+  let wK=Math.max(6,...data.map(d=>d.k.length),String(sum.kart).length);
+  let wE=Math.max(6,...data.map(d=>d.e.length),('EP '+sum.ep).length);
+  let wZ=Math.max(6,...data.map(d=>d.z.length),'Źródło'.length);
+  wN=Math.min(wN,32);
+
+  const line=(g,a,n,k,e,z)=>pad(g,wG)+'  '+pad(a,wA)+'  '+pad(n,wN)+'  '+pad(k,wK)+'  '+pad(e,wE)+'  '+pad(z,wZ);
+
+  const lines=[];
+  lines.push(line('Gniazdo','Nr artykułu','Nazwa','Kart.','EP','Źródło'));
+  lines.push('');
+  data.forEach(d=>{
+    const nm=d.n.length>wN?d.n.slice(0,wN-1)+'\u2026':d.n;
+    lines.push(line(d.g,d.a,nm,d.k,d.e,d.z));
+  });
+  lines.push('');
+  lines.push(line('SUMA','','',sum.kart===''?'':String(sum.kart),'EP '+sum.ep,''));
+
+  return '```\n'+lines.join('\n')+'\n```';
+}
+
+function generateExportHTMLForClipboard(){
+  const rows=exportRows();
+  const sum=exportSums(rows);
+  let html='<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;width:100%"><thead><tr>';
+  html+='<th>Gniazdo</th><th>Nr artykułu</th><th>Nazwa</th><th>Ilość kartonów</th><th>Ilość EP</th>';
+  html+='</tr></thead><tbody>';
+  rows.forEach(r=>{
+    html+=`<tr>
+      <td>${r.gniazdo}</td>
+      <td>${r.art}</td>
+      <td>${r.name}</td>
+      <td>${r.kart}</td>
+      <td>EP ${r.ep}</td>
+    </tr>`;
+  });
+  html+=`<tr>
+    <td><b>SUMA</b></td><td></td><td></td>
+    <td><b>${sum.kart}</b></td>
+    <td><b>EP ${sum.ep}</b></td>
+  </tr>`;
+  html+='</tbody></table>';
+  return html;
+}
+
+function toggleExport(){
+  const sec=document.getElementById('export-section');
+  if(sec.classList.contains('show')){sec.classList.remove('show');}
+  else{document.getElementById('export-text').innerHTML=generateExportHTML();sec.classList.add('show');sec.scrollIntoView({behavior:'smooth'});}
+}
+
+function pasteListFromClipboard(){
+  const ta=document.getElementById('inp-list');
+  if(!ta)return;
+  document.getElementById('input-area').classList.add('open');
+  ta.focus();
+  // W WebView (WebIntoApp) readText zwykle NIE działa — systemowe Wklej tak
+  if(navigator.clipboard&&navigator.clipboard.readText){
+    navigator.clipboard.readText().then(t=>{
+      if(t&&t.trim()){
+        ta.value=(ta.value?ta.value+'\n':'')+t.trim();
+      }else{
+        alert('Schowek pusty albo niedostępny w aplikacji.\n\nZrób tak:\n1. W WhatsApp: skopiuj listę\n2. Tu: przytrzymaj to pole → Wklej');
+      }
+    }).catch(()=>{
+      alert('Aplikacja (WebView) blokuje automatyczny schowek.\n\nZrób tak:\n1. Skopiuj listę w WhatsApp\n2. Przytrzymaj pole poniżej → Wklej');
+    });
+    return;
+  }
+  alert('Przytrzymaj pole listy → Wklej');
+}
+
+function showManualExportText(plain){
+  const sec=document.getElementById('export-section');
+  sec.classList.add('show');
+  let box=document.getElementById('export-manual-copy');
+  if(!box){
+    box=document.createElement('textarea');
+    box.id='export-manual-copy';
+    box.setAttribute('readonly','readonly');
+    box.style.cssText='width:100%;min-height:140px;margin-top:10px;background:#1a1a1a;color:#e0e0e0;border:1px solid #4488FF;border-radius:8px;padding:10px;font-size:12px;font-family:monospace;user-select:text;-webkit-user-select:text';
+    const host=document.getElementById('export-text');
+    if(host&&host.parentNode) host.parentNode.insertBefore(box, host.nextSibling);
+    else sec.appendChild(box);
+  }
+  const clean=String(plain).replace(/^```\n?/,'').replace(/\n?```$/,'');
+  box.value=clean;
+  box.style.display='block';
+  try{box.focus();box.setSelectionRange(0,box.value.length);}catch(e){try{box.select();}catch(e2){}}
+  return box;
+}
+
+function copyExport(){
+  const plain=generateExportText();
+  const btn=document.getElementById('btn-copy-exp');
+  // Zawsze pokaż tekst do ręcznego kopiowania (niezawodne w WebIntoApp / WebView)
+  showManualExportText(plain);
+  function showOk(){
+    btn.textContent='✓ Skopiowano';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Kopiuj tekst';btn.classList.remove('copied');},2000);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(plain).then(showOk).catch(()=>{
+      if(fallbackCopy(plain,showOk)) return;
+      btn.textContent='Przytrzymaj tekst → Kopiuj';
+      setTimeout(()=>{btn.textContent='Kopiuj tekst';},3000);
+    });
+  }else if(fallbackCopy(plain,showOk)){
+    /* ok */
+  }else{
+    btn.textContent='Przytrzymaj tekst → Kopiuj';
+    setTimeout(()=>{btn.textContent='Kopiuj tekst';},3000);
+  }
+}
+
+function fallbackCopy(text,cb){
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:0;left:0;width:90%;height:40px;opacity:0.01;z-index:99999';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.setSelectionRange(0,ta.value.length);
+    const ok=document.execCommand('copy');
+    document.body.removeChild(ta);
+    if(ok){if(cb)cb();return true;}
+  }catch(e){}
+  return false;
+}
+
+function formatKart(n){
+  if(n===''||n==null||isNaN(n))return '';
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+}
+
+// Obraz tabeli jak formularz — do WhatsApp (zero obróbki)
+function buildTableCanvas(){
+  const rows=exportRows();
+  const sum=exportSums(rows);
+  const headers=['Gniazdo','Nr artykułu','Nazwa','Ilość kartonów','Ilość EP','Źródło'];
+  const data=rows.map(r=>[r.gniazdo,r.art,r.name,formatKart(r.kart),'EP '+r.ep,r.zrodlo||'']);
+  data.push(['SUMA','','',formatKart(sum.kart),String(sum.ep),'']);
+
+  const padX=12;
+  const font='600 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif';
+  const fontBold='700 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif';
+  const measure=document.createElement('canvas').getContext('2d');
+  measure.font=font;
+
+  const cols=headers.length;
+  const widths=new Array(cols).fill(0);
+  function consider(row, bold){
+    measure.font=bold?fontBold:font;
+    row.forEach((cell,i)=>{
+      const w=measure.measureText(String(cell)).width+padX*2;
+      if(w>widths[i])widths[i]=w;
+    });
+  }
+  consider(headers,true);
+  data.forEach((r,idx)=>consider(r, idx===data.length-1));
+  widths[0]=Math.max(widths[0],70);
+  widths[1]=Math.max(widths[1],90);
+  widths[2]=Math.min(Math.max(widths[2],160),300);
+  widths[3]=Math.max(widths[3],100);
+  widths[4]=Math.max(widths[4],70);
+  widths[5]=Math.max(widths[5],60);
+
+  const rowH=36;
+  const tableW=widths.reduce((a,b)=>a+b,0)+1;
+  const tableH=rowH*(data.length+1)+1;
+  const scale=2;
+  const canvas=document.createElement('canvas');
+  canvas.width=tableW*scale;
+  canvas.height=tableH*scale;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(scale,scale);
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,tableW,tableH);
+  ctx.strokeStyle='#222';
+  ctx.lineWidth=1;
+  ctx.textBaseline='middle';
+
+  function drawRow(cells, y, isHeader, isSuma, zebra){
+    let x=0;
+    for(let i=0;i<cols;i++){
+      const w=widths[i];
+      if(isHeader) ctx.fillStyle='#f0f0f0';
+      else if(isSuma) ctx.fillStyle='#f7f7f7';
+      else if(zebra) ctx.fillStyle='#fafafa';
+      else ctx.fillStyle='#ffffff';
+      ctx.fillRect(x,y,w,rowH);
+      ctx.strokeRect(x+0.5,y+0.5,w-1,rowH-1);
+      ctx.fillStyle='#111';
+      ctx.font=(isHeader||isSuma)?fontBold:font;
+      const t=String(cells[i]??'');
+      let tx=x+padX;
+      if(i===3||i===4){
+        tx=x+w-padX-ctx.measureText(t).width;
+      } else if(isHeader){
+        tx=x+(w-ctx.measureText(t).width)/2;
+      }
+      ctx.fillText(t, tx, y+rowH/2);
+      x+=w;
+    }
+  }
+
+  drawRow(headers, 0, true, false, false);
+  data.forEach((r,i)=>drawRow(r, rowH*(i+1), false, i===data.length-1, i%2===1));
+  return canvas;
+}
+
+async function shareTableImage(){
+  const btn=document.getElementById('btn-img-exp');
+  const wrap=document.getElementById('export-img-wrap');
+  const img=document.getElementById('export-img');
+  const hint=document.getElementById('export-img-hint');
+  const dl=document.getElementById('export-img-dl');
+  const rows=exportRows();
+  if(!rows.length){alert('Brak pozycji z gniazdem do tabeli.');return;}
+
+  btn.textContent='⏳ Generuję…';
+  try{
+    const canvas=buildTableCanvas();
+    const dataUrl=canvas.toDataURL('image/png');
+    img.src=dataUrl;
+    img.style.display='block';
+    if(dl){dl.href=dataUrl;dl.style.display='inline-flex';}
+    wrap.classList.add('show');
+    // Upewnij się, że sekcja eksportu jest otwarta
+    document.getElementById('export-section').classList.add('show');
+    wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+    let shared=false;
+    try{
+      const blob=await new Promise(res=>canvas.toBlob(res,'image/png'));
+      if(blob){
+        const file=new File([blob],'strefa35_przydzial.png',{type:'image/png'});
+        if(navigator.canShare&&navigator.canShare({files:[file]})){
+          await navigator.share({files:[file],title:'Strefa 35 — przydział'});
+          shared=true;
+        }
+      }
+    }catch(e){
+      if(e&&e.name==='AbortError') shared=true;
+    }
+
+    if(shared){
+      hint.textContent='Udostępniono.';
+    }else{
+      hint.textContent='W aplikacji: przytrzymaj obraz → Udostępnij → WhatsApp. Albo ⬇ Pobierz PNG i wyślij z Plików.';
+    }
+    btn.textContent='✓ Gotowe';
+    btn.classList.add('done');
+    setTimeout(()=>{btn.textContent='📷 Obraz na WA';btn.classList.remove('done');},2500);
+  }catch(err){
+    console.error(err);
+    btn.textContent='📷 Obraz na WA';
+    alert('Nie udało się zrobić obrazu: '+(err&&err.message?err.message:err));
+  }
+}
+
+
+function validateItem(item){
+  // Tylko sygnał — NIE blokuje pracy. Człowiek decyduje.
+  const name=String(item.name||'').trim();
+  const art=String(item.art||'').trim();
+  const reasons=[];
+  if(!name) reasons.push('brak nazwy');
+  if(!art||art==='—') reasons.push('brak numeru artykułu');
+  // Brak EP z listy → apka daje 1 automatycznie
+  if(item.maxEp==null||item.maxEp===''||isNaN(parseInt(item.maxEp))) reasons.push('brak EP na liście (ustawiono 1)');
+  // Sklejony numer w nazwie: 156524Kiełbasa
+  if(/\d{4,}[A-Za-zÀ-ÿĄąĆćĘęŁłŃńÓóŚśŹźŻż]/.test(name)) reasons.push('w nazwie widać drugi artykuł (sklejony numer)');
+  // Drugi samodzielny numer 5+ cyfr w nazwie
+  const nums=name.match(/\b\d{5,}\b/g);
+  if(nums&&nums.length>=1) reasons.push('w nazwie jest dodatkowy numer artykułu');
+  if(name.length>70&&/\d{4,}/.test(name)) reasons.push('nazwa wygląda na dwie pozycje');
+  return {ok:reasons.length===0, reasons};
+}
+
+function render(){
+  const content=document.getElementById('main-content');const stats=document.getElementById('stats');const warn=document.getElementById('warn-bar');
+  const swapBar=document.getElementById('swap-mode-bar');const hint=document.getElementById('hint-bar');
+  const btnExport=document.getElementById('btn-export');const exportSec=document.getElementById('export-section');
+  const btnAssign=document.getElementById('btn-assign');const btnEdit=document.getElementById('btn-edit-list');
+  const free=freeSlots();const aSlots=assigned?items.reduce((s,i)=>s+(i.slots?i.slots.length:0),0):0;
+  if(items.length===0){stats.style.display='none';warn.classList.remove('show');swapBar.classList.remove('show');hint.classList.remove('show');
+    btnExport.style.display='none';if(btnEdit)btnEdit.style.display='none';if(btnAssign)btnAssign.style.display='';
+    exportSec.classList.remove('show');
+    content.innerHTML='<div class="empty">Wgraj listę i kliknij "▶ Przypisz"</div>';updateLockGrid();updateCounter();return;}
+  stats.style.display='flex';
+  swapBar.classList.toggle('show',selectedId!==null&&!assigned);
+  // Podpowiedź: gdzie jest wklejona lista / jak zmieniać kolejność
+  if(!assigned&&items.length>0&&selectedId===null){
+    const hasPaste=(document.getElementById('inp-list')||{}).value||'';
+    if(String(hasPaste).trim()){
+      hint.textContent='Lista wczytana. Poprawki: naciśnij + Lista (tekst zostaje w polu).';
+      hint.classList.add('show');
+    }else if(items.length>1){
+      hint.textContent='Tap na kafelek → zaznacz · Tap na drugi → zamień miejscami';
+      hint.classList.add('show');
+    }else{
+      hint.classList.remove('show');
+    }
+  }else if(selectedId!==null&&!assigned){
+    hint.classList.remove('show');
+  }else{
+    hint.classList.remove('show');
+  }
+  btnExport.style.display=assigned?'':'none';
+  if(btnAssign)btnAssign.style.display=assigned?'none':'';
+  if(btnEdit)btnEdit.style.display=assigned?'':'none';
+  const noSlot=items.filter(i=>!i.gniazdo&&assigned);
+  document.getElementById('st-art').textContent=items.length;document.getElementById('st-ep').textContent=items.reduce((s,i)=>s+(parseInt(i.ep)||0),0);
+  document.getElementById('st-free').textContent=assigned?free.length-aSlots:free.length;document.getElementById('st-used').textContent=assigned?aSlots:'—';
+  if(assigned&&noSlot.length>0){warn.textContent='⚠ '+noSlot.length+' artykuł(ów) bez pełnego przydziału';warn.classList.add('show');}else warn.classList.remove('show');
+  content.innerHTML='<div class="art-list" id="art-list"></div>';const list=document.getElementById('art-list');
+  let badCount=0;
+  items.forEach(item=>{
+    const v=validateItem(item);if(!v.ok)badCount++;
+    const hasSlot=item.gniazdo&&assigned;const isSel=selectedId===item.id;const isTgt=selectedId!==null&&selectedId!==item.id&&!assigned;
+    const showMax=item.cap||item.maxEp;
+    const card=document.createElement('div');
+    card.className='art-card'+(v.ok?' ok':' bad')+(assigned?(hasSlot?' assigned':' no-slot'):'')+(isSel?' swap-selected':isTgt?' swap-target':'');
+    const epMax=assigned?(item.cap||item.maxEp||44):44;
+    const epCtrl=`<input class="ep-input" type="number" min="0" max="${epMax}" value="${item.ep||0}" onchange="updateEp(${item.id},this.value)" onblur="updateEp(${item.id},this.value)" onclick="this.select()"><div class="ep-label">EP</div>`;
+    const mark=v.ok?'<span class="v-badge ok" title="OK">✓</span>':'<span class="v-badge bad" title="Do sprawdzenia">✕</span>';
+    const reason=v.ok?'':`<div class="v-reason">Do sprawdzenia: ${v.reasons.join(' · ')}</div>`;
+    card.innerHTML=`<div class="art-top" onclick="handleCardTap(${item.id})">
+      <div class="art-nr${isSel?' selected':''}">${item.nr}${isSel?' 🔵':''}</div>
+      <div class="art-info"><div class="art-name-row"><div class="art-name">${item.name}</div>${mark}</div>${reason}<div class="art-code">Art. ${item.art}${item.zrodlo?' · Źródło: '+item.zrodlo:''}${showMax?' · max '+showMax+' EP':''}</div></div>
+      <div class="art-right" onclick="event.stopPropagation()">
+        ${epCtrl}
+        <button class="btn-del-art" onclick="deleteItem(${item.id})">✕</button>
+      </div></div>
+      ${assigned?`<div class="art-bottom">${hasSlot?`<div class="gn-badge">📍 ${item.gniazdo}</div><div class="slots-badge">${item.slots.length>1?'+'+(item.slots.length-1)+' gniazd':'tylko to'}</div>`:`<div class="no-slot-badge">⚠ Brak gniazda</div>`}${item.zrodlo?`<div class="slots-badge">Źródło: ${item.zrodlo}</div>`:''}</div>`:''}`;
+    list.appendChild(card);});
+  if(!assigned&&badCount>0){
+    warn.textContent='⚠ '+badCount+' poz. do sprawdzenia (czerwony ✕) — możesz iść dalej albo poprawić';
+    warn.classList.add('show');
+  }
+  updateLockGrid();updateCounter();
+}
+
+// Przed przypisaniem: EP = max. Po: tylko ilość gniazd (max bez zmian).
+function updateEp(id,val){
+  const v=parseInt(val);
+  const item=items.find(i=>i.id===id);
+  if(!item)return;
+  if(!assigned){
+    saveHistory();
+    const newEp=isNaN(v)||v<1?1:v;
+    item.ep=newEp;item.maxEp=newEp;item.pinned=false;
+    saveState();render();
+    return;
+  }
+  // Po przypisaniu — max/cap zostaje, pinujemy DOKŁADNIE wpisaną wartość
+  const cap=parseInt(item.cap)||parseInt(item.maxEp)||44;
+  let newEp=isNaN(v)?0:v;
+  if(newEp<0)newEp=0;
+  if(newEp>cap)newEp=cap;
+  // Brak realnej zmiany — nic nie rób (unikaj pętli z onblur)
+  if(item.pinned&&parseInt(item.ep)===newEp)return;
+  if(!item.pinned&&parseInt(item.ep)===newEp&&item.slots&&item.slots.length===newEp)return;
+  saveHistory();
+  item.ep=newEp;
+  item.pinned=true;
+  redistributeAroundPins();
+}
+function toggleLocks(){document.getElementById('lock-section').classList.toggle('open');}
+function updateLockGrid(){
+  const grid=document.getElementById('lock-grid');grid.innerHTML='';
+  ALL_SLOTS.forEach(slot=>{const div=document.createElement('div');div.className='lock-btn'+(blocked.includes(slot)?' locked':'');
+    div.textContent=blocked.includes(slot)?'🔒 '+slot:slot;
+    div.onclick=()=>{blocked=blocked.includes(slot)?blocked.filter(s=>s!==slot):[...blocked,slot];saveBlocked();if(assigned)assignAll();else{render();updateLockGrid();}};grid.appendChild(div);});
+}
+function clearAll(){
+  saveHistory();
+  items=[];assigned=false;selectedId=null;history=[];
+  document.getElementById('btn-undo').disabled=true;
+  document.getElementById('export-section').classList.remove('show');
+  clearState(); // blokady zostają
+  render();
+}
+updateLockGrid();render();
+
+// Reaguj na obrót telefonu
+window.addEventListener('orientationchange', ()=>{ setTimeout(()=>{ render(); if(document.getElementById('export-section').classList.contains('show')){ document.getElementById('export-text').innerHTML=generateExportHTML(); } }, 150); });
+window.addEventListener('resize', ()=>{ /* layout CSS-owy i tak się dostosuje */ });
+</script>
+</body>
+</html>
